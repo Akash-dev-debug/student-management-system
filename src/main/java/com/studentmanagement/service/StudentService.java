@@ -34,6 +34,14 @@ public class StudentService {
         return studentDAO.getAllStudentsUsingProcedure();
     }
 
+    public List<Student> getStudentsByDepartment(String department)
+            throws SQLException {
+
+        requireText(department, "Department");
+
+        return studentDAO.getStudentsByDepartment(department.trim());
+    }
+
     public boolean updateStudent(Student student) throws SQLException {
         if (student == null) {
             throw new IllegalArgumentException(

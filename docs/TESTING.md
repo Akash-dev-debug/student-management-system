@@ -57,3 +57,52 @@ Java transaction commit and rollback behavior.
 Invalid input and duplicate-record handling.
 
 Backup and recovery testing with additional records
+
+
+## Course CRUD Testing
+
+The Course CRUD test verifies the following operations:
+
+1. **Create:** Inserts a temporary course into the database.
+2. **Read:** Retrieves the newly created course.
+3. **Update:** Changes the course name and credit value.
+4. **Delete:** Removes the temporary test course.
+
+### Run the Test
+
+```bash
+mvn exec:java -Dexec.mainClass="com.studentmanagement.service.CourseCrudTest"
+```
+
+### Expected Result
+
+```text
+Update test: PASSED
+Delete test: PASSED
+```
+
+The test uses the temporary course code `CRUD999`.
+
+
+## Enrollment Batch Testing
+
+**Test class:** `EnrollmentBatchTest`
+
+**Purpose:** Verify that multiple student-course enrollments can be inserted using JDBC batch operations and transaction management.
+
+**Test data:**
+- Student ID: 1
+- Course IDs: 1 and 2
+
+**Run command:**
+
+```bash
+mvn exec:java -Dexec.mainClass="com.studentmanagement.service.EnrollmentBatchTest"
+```
+
+**Expected result:**
+- Two enrollment records are inserted.
+- The batch result contains two entries.
+- The transaction is committed when the operation succeeds.
+- The transaction is rolled back if a SQL error occurs.
+

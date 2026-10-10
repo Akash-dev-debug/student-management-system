@@ -133,3 +133,35 @@ Add a graphical user interface.
 License
 
 This project was developed for educational purposes.
+
+
+## Implemented Features
+
+### Student Management
+- Add, view, search, update, and delete student records.
+- Search students by department.
+- Retrieve student records using stored procedures.
+
+### Course Management
+- Add and view courses.
+- Update and delete courses.
+- Insert multiple courses using JDBC batch operations.
+
+### Enrollment Management
+- Enroll students in courses.
+- View enrollment records.
+- Insert multiple enrollments using batch operations.
+
+### Database and Performance
+- JDBC connection pooling using Apache Commons DBCP2.
+- PreparedStatement for parameterized SQL queries.
+- Transaction management with commit and rollback.
+- Database indexes for frequently queried columns.
+- MySQL schema and stored procedure scripts.
+
+### Testing and Documentation
+- Course CRUD test.
+- Course batch operation test.
+- Transaction rollback test.
+- Enrollment batch operation test.
+- Setup and testing instructions in the `docs/` directory.

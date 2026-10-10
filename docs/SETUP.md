@@ -1,69 +1,25 @@
-Student Management System — Setup Guide
 
-1. Requirements
+## JDBC Connection Pooling
 
-JDK 17 or later
+This project uses Apache Commons DBCP2 to manage database connections.
 
-Apache Maven
+### Pool Configuration
 
-MySQL Server 8.0 or compatible
+- Initial connections: 2
+- Maximum connections: 10
+- Maximum idle connections: 5
+- Minimum idle connections: 2
+- Maximum wait time: 5000 milliseconds
 
-MySQL Workbench (recommended)
+### Benefits
 
-2. Create the Database
+- Reuses database connections instead of creating a new connection for every operation.
+- Limits the maximum number of pooled connections.
+- Reduces connection-management overhead.
+- Closes the connection pool when the application exits.
 
-Start MySQL Server.
+### Implementation
 
-Open MySQL Workbench and connect to your MySQL instance.
-
-Execute database/schema.sql.
-
-Execute database/procedures.sql to create the GetAllStudents stored procedure.
-
-3. Configure Database Access
-
-Create a dedicated MySQL user with access to the student_management database.
-
-Configure the local file src/main/resources/db.properties:
-
-db.url=jdbc:mysql://localhost:3306/student_management
-db.username=your_database_user
-db.password=your_database_password
-
-Replace the example values with your own credentials. Do not commit this file to GitHub.
-
-4. Build the Project
-
-Open a terminal in the project root and execute:
-
-mvn clean compile
-
-5. Run the Application
-
-Execute:
-
-mvn exec:java -Dexec.mainClass="com.studentmanagement.ui.Main"
-
-The application should connect to MySQL and display the student management menu.
-
-6. Database Backup
-
-Run database/backup.bat from a Windows terminal. Enter the database user's password when prompted.
-
-The backup file is saved in database/backups/.
-
-7. Database Recovery
-
-Use database/restore.bat with a trusted SQL backup file. Test recovery against a separate test database before restoring important data.
-
-8. Troubleshooting
-
-Access denied: Verify the database username, password, and privileges.
-
-Connection refused: Check that MySQL Server is running.
-
-Database not found: Execute database/schema.sql.
-
-Stored procedure not found: Execute database/procedures.sql.
-
-Build failure: Check the Maven output and verify the JDK configuration.
+The connection pool is configured in `DatabaseConnection.java`.
+Database operations obtain connections through `getConnection()`.
+The application closes the pool through `closePool()` during shutdown.

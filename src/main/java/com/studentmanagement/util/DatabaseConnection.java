@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Properties;
 
 public final class DatabaseConnection {
@@ -14,6 +15,7 @@ public final class DatabaseConnection {
     private static final BasicDataSource DATA_SOURCE = createDataSource();
 
     private DatabaseConnection() {
+        // Prevent object creation.
     }
 
     private static BasicDataSource createDataSource() {
@@ -25,7 +27,8 @@ public final class DatabaseConnection {
 
             if (input == null) {
                 throw new IllegalStateException(
-                        "db.properties was not found in src/main/resources.");
+                        "db.properties file was not found."
+                );
             }
 
             properties.load(input);
@@ -34,16 +37,30 @@ public final class DatabaseConnection {
             throw new ExceptionInInitializerError(exception);
         }
 
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl(properties.getProperty("db.url"));
-        dataSource.setUsername(properties.getProperty("db.username"));
-        dataSource.setPassword(properties.getProperty("db.password", ""));
+        String url = properties.getProperty("db.url");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
 
+        if (url == null || url.isBlank()
+                || username == null || username.isBlank()
+                || password == null) {
+            throw new IllegalStateException(
+                    "Please check the database settings in db.properties."
+            );
+        }
+
+        BasicDataSource dataSource = new BasicDataSource();
+
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+
+        // Connection pool configuration
         dataSource.setInitialSize(2);
         dataSource.setMaxTotal(10);
         dataSource.setMaxIdle(5);
         dataSource.setMinIdle(2);
-        dataSource.setMaxWaitMillis(5000);
+        dataSource.setMaxWait(Duration.ofMillis(5000));
 
         return dataSource;
     }

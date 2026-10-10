@@ -10,7 +10,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +19,13 @@ public class StudentDAO {
     public boolean addStudent(Student student) throws SQLException {
         String sql = """
                 INSERT INTO students
-                (student_code, first_name, last_name, date_of_birth,
-                 email, phone, department, enrollment_date)
+                    (student_code, first_name, last_name, date_of_birth,
+                     email, phone, department, enrollment_date)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, student.getStudentCode());
             statement.setString(2, student.getFirstName());
@@ -38,18 +36,24 @@ public class StudentDAO {
             statement.setString(7, student.getDepartment());
             statement.setDate(8, Date.valueOf(student.getEnrollmentDate()));
 
-            if (statement.executeUpdate() == 0) {
-                return false;
-            }
-
-            try (ResultSet keys = statement.getGeneratedKeys()) {
-                if (keys.next()) {
-                    student.setId(keys.getInt(1));
-                }
-            }
-
-            return true;
+            return statement.executeUpdate() == 1;
         }
+    }
+
+    public List<Student> getAllStudents() throws SQLException {
+        String sql = "SELECT * FROM students ORDER BY id";
+        List<Student> students = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                students.add(mapStudent(resultSet));
+            }
+        }
+
+        return students;
     }
 
     public Student getStudentById(int id) throws SQLException {
@@ -70,12 +74,14 @@ public class StudentDAO {
         return null;
     }
 
-    public List<Student> getAllStudents() throws SQLException {
-        String sql = "SELECT * FROM students ORDER BY id";
+    public List<Student> getAllStudentsUsingProcedure()
+            throws SQLException {
+
+        String sql = "{CALL GetAllStudents()}";
         List<Student> students = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
+             CallableStatement statement = connection.prepareCall(sql);
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
@@ -86,16 +92,21 @@ public class StudentDAO {
         return students;
     }
 
-    public List<Student> getAllStudentsUsingProcedure() throws SQLException {
-        String sql = "{CALL GetAllStudents()}";
+    public List<Student> getStudentsByDepartment(String department)
+            throws SQLException {
+
+        String sql = "{CALL GetStudentsByDepartment(?)}";
         List<Student> students = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.getConnection();
-             CallableStatement statement = connection.prepareCall(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+             CallableStatement statement = connection.prepareCall(sql)) {
 
-            while (resultSet.next()) {
-                students.add(mapStudent(resultSet));
+            statement.setString(1, department);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    students.add(mapStudent(resultSet));
+                }
             }
         }
 

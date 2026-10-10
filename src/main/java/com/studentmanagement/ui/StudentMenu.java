@@ -29,6 +29,7 @@ public class StudentMenu {
                     case "3" -> searchStudent();
                     case "4" -> updateStudent();
                     case "5" -> deleteStudent();
+                    case "6" -> searchStudentsByDepartment();
                     case "0" -> running = false;
                     default -> System.out.println("Invalid option.");
                 }
@@ -52,6 +53,7 @@ public class StudentMenu {
         System.out.println("3. Search Student by ID");
         System.out.println("4. Update Student");
         System.out.println("5. Delete Student");
+        System.out.println("6. Search Students by Department");
         System.out.println("0. Exit");
         System.out.print("Choose an option: ");
     }
@@ -92,6 +94,30 @@ public class StudentMenu {
         if (student == null) {
             System.out.println("Student not found.");
         } else {
+            System.out.println(student);
+        }
+    }
+
+    private void searchStudentsByDepartment() throws SQLException {
+        System.out.print("Enter department: ");
+        String department = scanner.nextLine().trim();
+
+        if (department.isEmpty()) {
+            System.out.println("Department cannot be empty.");
+            return;
+        }
+
+        List<Student> students =
+                studentService.getStudentsByDepartment(department);
+
+        if (students.isEmpty()) {
+            System.out.println("No students found in this department.");
+            return;
+        }
+
+        System.out.println("\n--- Students by Department ---");
+
+        for (Student student : students) {
             System.out.println(student);
         }
     }

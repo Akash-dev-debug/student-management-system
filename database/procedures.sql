@@ -1,8 +1,6 @@
 
 USE student_management;
 
-DROP PROCEDURE IF EXISTS GetAllStudents;
-
 DELIMITER $$
 
 CREATE PROCEDURE GetAllStudents()
@@ -19,12 +17,6 @@ BEGIN
     ORDER BY id;
 END $$
 
-DELIMITER ;
-
-
-
-DELIMITER //
-
 CREATE PROCEDURE GetStudentsByDepartment(
     IN p_department VARCHAR(100)
 )
@@ -39,6 +31,6 @@ BEGIN
     FROM students
     WHERE department = p_department
     ORDER BY last_name, first_name;
-END //
+END $$
 
 DELIMITER ;

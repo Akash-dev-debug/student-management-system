@@ -25,9 +25,5 @@ CREATE TABLE IF NOT EXISTS student_courses (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_students_department
-ON students(department);
 
-CREATE INDEX idx_courses_course_name
-ON courses(course_name);
 

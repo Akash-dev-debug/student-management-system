@@ -1,0 +1,22 @@
+
+# Private database credentials
+src/main/resources/db.properties
+
+# Compiled Java files
+target/
+*.class
+
+# IDE settings
+.vscode/
+.idea/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Database backup files
+database/backups/
+
+# Operating system files
+.DS_Store
+Thumbs.db
